@@ -97,7 +97,7 @@ int main()
 	}
 
 
-	f = fopen("output2.txt", "w");  
+	f = fopen("output.txt", "w");  
 	for (int i = 0; i <= 9999; i++) 
 	{
 		if (i > 0 && i % 100 == 0) 
