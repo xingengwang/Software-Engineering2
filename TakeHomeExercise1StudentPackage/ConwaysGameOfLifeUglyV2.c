@@ -1,3 +1,8 @@
+/* xingeng wang
+*  11144515
+*  xiw031
+*/
+
 #include <stdio.h>
 
 void exit(int);
