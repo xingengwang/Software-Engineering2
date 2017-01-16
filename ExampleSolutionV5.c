@@ -54,8 +54,8 @@ int *runScenario(int countSteps)
 }
 
 
-/*	PreConditions  :
-*	PostConditions :
+/*	PreConditions  : iTime is an integer
+*	PostConditions : return the cells update in the final iteration
 */
 *int *updateSpace(int iTime)
 {
@@ -74,8 +74,9 @@ int *runScenario(int countSteps)
 }
 
 
-/*	PreConditions  :
-*	PostConditions :
+/*	PreConditions  : currentCells and nextCells are the pointer for the current cell and next cell
+*					 the row and col coordinate is valid
+*	PostConditions : nextCells has the value for the next cell for the given currentCells
 */
 void updateCell(int *currentCells, int *nextCells, int row, int col)
 {
