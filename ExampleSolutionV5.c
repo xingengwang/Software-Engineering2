@@ -35,6 +35,10 @@ int main(int argc, char *argv[])
 }
 
 
+/*	PreConditions  : countSteps is an integer contain how many time we want the array to be updated 
+*	PostConditions : return arrayLatestState which contain the result contain only '*' from the input file
+*					 print out step on frauency
+*/
 int *runScenario(int countSteps)
 {
     int *arrayLatestState = NULL;
@@ -49,6 +53,10 @@ int *runScenario(int countSteps)
 	return(arrayLatestState);
 }
 
+
+/*	PreConditions  :
+*	PostConditions :
+*/
 *int *updateSpace(int iTime)
 {
 	int *currentCells;
@@ -65,6 +73,10 @@ int *runScenario(int countSteps)
         return(nextCells);  // the cells updated in the final iteration
 }
 
+
+/*	PreConditions  :
+*	PostConditions :
+*/
 void updateCell(int *currentCells, int *nextCells, int row, int col)
 {
 	int countSurroundingAlive = countSurroundingLiveCells(currentCells, row, col);
@@ -74,6 +86,10 @@ void updateCell(int *currentCells, int *nextCells, int row, int col)
 	nextCells[iCurrentCell] = computeLiveness(isCurrentCellAlive, countSurroundingAlive);
 }
 
+
+/*	PreConditions  : None
+*	PostConditions : checked if the countSurroundingAlive is 2 or 3 if the current cell is alive
+*/
 int computeLiveness(int isCurrentCellAlive, int countSurroundingAlive)
 {
 	if (isCurrentCellAlive)
@@ -82,6 +98,10 @@ int computeLiveness(int isCurrentCellAlive, int countSurroundingAlive)
 		return (countSurroundingAlive == 3);
 }
 
+
+/*	PreConditions  : currentCells and row and col must be valid
+*	PostConditions : all of the surrounding cell of the given coordinate is return id they are alive
+*/
 int countSurroundingLiveCells(int *currentCells, int row, int col)
 {
 	int countSurroundingAlive = 0;
@@ -104,17 +124,32 @@ int countSurroundingLiveCells(int *currentCells, int row, int col)
 	return(countSurroundingAlive);
 }
 
+/*	PreConditions  : None
+*	PostConditions : checkd if the row and col is valid 
+*					 return true if yes, return false otherwise
+*/
 bool isLegalCoord(int row, int col)
 {
 	return ((row >= 0 && row < ROW_COUNT) &&
 			(col >= 0 && col < COL_COUNT));
 }
 
+
+/*	PreConditions  : None
+*	PostConditions : return the value of index
+*/
 int indexForRowCol(int row, int col)
 {
 	return row * ROW_COUNT + col;
 }
 
+
+/*	PreConditions  : iTime is an integer
+*					 pArrayCurrentCells is an pointer to an integer
+*					 pArrayNextCells is an pointer to an integer
+*	PostConditions : pArrayCurrentCells has the value for the CurrentCells 
+*					 pArrayNextCells has the value for the next Cell 
+*/
 void determineCurrentAndNextCells(int iTime, int **pArrayCurrentCells, int **pArrayNextCells)
 {
 	bool isEvenStep = (iTime % 2 == 0);
@@ -124,6 +159,11 @@ void determineCurrentAndNextCells(int iTime, int **pArrayCurrentCells, int **pAr
 	*pArrayNextCells = isEvenStep ? bufferOdd : bufferEven;
 }
 
+/*	PreConditions  : arrayCurrentCells is a array of integer
+*					 strFileName can be found in at the cureent working diretory
+*	PostConditions : exit the program if the file not found with file name "strFileName" 
+*					 all index in the strFileName must been visited and store at the arrayCurrentCells if it is '*'
+*/
 void readState(char *strFileName, int *arrayCurrentCells)
 {
   FILE *file = fopen(strFileName, "r");
@@ -150,6 +190,13 @@ void readState(char *strFileName, int *arrayCurrentCells)
   fclose(file);
 }
 
+
+/*	PreConditions  : strFileName is a pointer of char
+*					 arrayCurrentCells is a pointer of integer
+*	PostConditions : a file with file name is strFileName is created if not existed before, otherwise override it
+*					 data from the arrayCurrentCells is wrote in to the strFileName file
+*					 the file is closed after this operation 
+*/
 void  writeState(char *strFileName, int *arrayCurrentCells)
 {
   FILE *file = fopen(strFileName, "w");
@@ -166,6 +213,10 @@ void  writeState(char *strFileName, int *arrayCurrentCells)
   fclose(file);
 }
 
+
+/*	PreConditions  : cellValue is an integer
+*	PostConditions : return ' ' if the cellValue is 0 else return '*'
+*/
 char textualEncodingForCellValue(int cellValue)
 {
   if (cellValue == 0)
@@ -174,11 +225,18 @@ char textualEncodingForCellValue(int cellValue)
     return '*';
 }
 
+
+/*	PreConditions  : cEncoded is a char
+*	PostConditions : the condition of if the cell is encoded is return
+*/
 bool isLegalTextualEncoding(char cEncoded)
 {
   return(cEncoded == ' ' || cEncoded == '*');
 }
 
+/*	PreConditions  : cEncoded is a char
+*	PostConditions : checked if the cEncoded is a '*'
+*/
 int cellValueForTextualEncoding(char cEncoded)
 {
   return cEncoded == '*' ? 1 : 0;
