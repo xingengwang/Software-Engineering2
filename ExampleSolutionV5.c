@@ -1,3 +1,8 @@
+/* Xingeng Wang
+*  11144515
+*  xiw031
+*/ 
+
 #define ROW_COUNT (100)
 #define COL_COUNT (100)
 #define REPORTING_FREQUENCY	(1000)
