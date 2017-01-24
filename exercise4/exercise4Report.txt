@@ -1,0 +1,68 @@
+/*xingeng wang
+* 11144515
+* xiw031
+*/
+
+V1: The ugly version
+V2:	The refactored code for Conway's game of life absent flexibility concerning the rule to use for updating a cell.
+V3:	The refactored code for Conway's game of life with flexibility concerning the rule to use for updating a cell.
+
+
+Only the user time is recorded
+
+				V1			V2			V3
+Part A		0m11.297s	1m13.484s	1m13.953s
+Part C 02	0m5.906s	0m23.656s	0m20.422s
+Part C 03	0m6.016s	0m10.469s	0m9.828s
+
+
+PartA:
+	The V1 has the shortest time among three of these, this is because it did all the ting inside the main and saved 
+	time from use function calls.
+	
+Part C 02:
+	With -O2 option for comply, all version of code is full Optimize, now the V2 and V3 is fast too, but still slower 
+	than the V1. 
+
+Part C 03:
+	The time for V1 remain close with -O2, but the time for V2 and V3 is halfed and is also closed to V1.
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

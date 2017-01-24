@@ -1,0 +1,8 @@
+/*xingeng wang
+* 11144515
+* xiw031
+*/
+
+If I need to modify the rule to change the dependency of the cell, 
+I will modify the code inside the function countSurroundingLiveCells, 
+the deltaRow and deltaCol and be change to other value such as from -2 to +2.
