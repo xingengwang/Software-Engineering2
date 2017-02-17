@@ -1,3 +1,8 @@
+// This assignment is done by pair programming
+// Xingneg Wang		|	Jared Manderscheid
+// 11144515			|	11159557
+// xiw031			|	jam943
+
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -14,18 +19,19 @@
 
 typedef int bool;
 
-int *runScenario(int countSteps, int (*pFnComputeLiveness)(bool isCurrentCellAlive, int countSurroundingAlive));
-int *updateSpace(int iTime, int (*pFnComputeLiveness)(bool isCurrentCellAlive, int countSurroundingAlive));
-void updateCell(int *currentCells, int *nextCells, int row, int col, int (*pFnComputeLiveness)(bool isCurrentCellAlive, int countSurroundingAlive));
+int **runScenario(int countSteps, int (*pFnComputeLiveness)(bool isCurrentCellAlive, int countSurroundingAlive));
+int **updateSpace(int iTime, int (*pFnComputeLiveness)(bool isCurrentCellAlive, int countSurroundingAlive));
+void updateCell(int **currentCells, int **nextCells, int row, int col, int (*pFnComputeLiveness)(bool isCurrentCellAlive, int countSurroundingAlive));
 bool computeLivenessClassic(int isCurrentCellAlive, int countSurroundingAlive);
 bool computeLivenessRemainAlive2Thru4(bool isCurrentCellAlive, int countSurroundingAlive);
 bool computeLivenessRemainAlive1Thru3(bool isCurrentCellAlive, int countSurroundingAlive);
-int countSurroundingLiveCells(int *currentCells, int row, int col);
+int countSurroundingLiveCells(int **currentCells, int row, int col);
 int indexForRowCol(int row, int col);
 void determineCurrentAndNextCells(int iTime, int **pArrayCurrentCells, int **pArrayNextCells);
 bool isLegalCoord(int row, int col);
-void readState(char *strFileName, int *arrayCurrentCells);
-void  writeState(char *strFileName, int *arrayCurrentCells);
+// redo the function decalction
+void readState(char *strFileName, int arrayCurrentCells[ROW_COUNT][COL_COUNT]);
+void writeState(char *strFileName, int **arrayCurrentCells);
 int isLegalTextualEncoding(char cEncoded);
 int cellValueForTextualEncoding(char cEncoded);
 char textualEncodingForCellValue(int cellValue);
@@ -37,8 +43,9 @@ typedef bool (*livenessRuleType)(bool isCurrentCellAlive, int countSurroundingAl
 bool determineArgumentsReturnIsLegal(int argc, char *argv[], int *pCountIterations, livenessRuleType *ppFnComputeLiveness);
 livenessRuleType determineRuleFunctionForCommandLineArgument(char *strCommandLineArg);
 
-int bufferEven[CELL_COUNT];
-int bufferOdd[CELL_COUNT];
+//Changed to 2D
+int bufferEven[ROW_COUNT][COL_COUNT];
+int bufferOdd[ROW_COUNT][COL_COUNT];
 
 // runs Conway's game of life 
 
@@ -65,8 +72,8 @@ int main(int argc, char *argv[])
   }
   else	
   {
-	  readState("input.txt", bufferEven); 
-	  int *finalState = runScenario(countIterations, pFnComputeLiveness);	
+	  readState("fixedPoint1_100x100.txt", bufferEven); 
+	  int **finalState = runScenario(countIterations, pFnComputeLiveness);	
 	  writeState("output.txt", finalState); 
 	  
 	  exit(0);
@@ -81,9 +88,9 @@ int main(int argc, char *argv[])
 // POSTCONDITIONS:
 //		returns a pointer to the final state of the model, encoded in the same row-major order as was bufferEven.  This final state was produced by 
 //		running Conway's Game of Life for countSteps, starting with the initial state of the model
-int *runScenario(int countSteps, bool (*pFnComputeLiveness)(bool isCurrentCellAlive, int countSurroundingAlive))
+int **runScenario(int countSteps, bool (*pFnComputeLiveness)(bool isCurrentCellAlive, int countSurroundingAlive))
 {
-    int *arrayLatestState = NULL;
+    int **arrayLatestState = NULL;
 
 	for (int iTime  = 0; iTime < countSteps; iTime ++)
 		{
@@ -104,11 +111,11 @@ int *runScenario(int countSteps, bool (*pFnComputeLiveness)(bool isCurrentCellAl
 // POSTCONDITIONS:
 //		returns a pointer to the final state of the model, encoded in the same row-major order as was bufferEven.  This final state was produced by 
 //		running Conway's Game of Life for countSteps, starting with the initial state of the model
-int *updateSpace(int iTime, bool (*pFnComputeLiveness)(bool isCurrentCellAlive, int countSurroundingAlive))
+int **updateSpace(int iTime, bool (*pFnComputeLiveness)(bool isCurrentCellAlive, int countSurroundingAlive))
 {
-	int *currentCells;
-	int *nextCells;
-	determineCurrentAndNextCells(iTime, &currentCells, &nextCells);
+	int **currentCells;
+	int **nextCells;
+	determineCurrentAndNextCells(iTime, currentCells, nextCells);
 
 	for (int row = 0; row < ROW_COUNT; row++)
 		for (int col = 0; col < COL_COUNT; col++)
@@ -132,13 +139,13 @@ int *updateSpace(int iTime, bool (*pFnComputeLiveness)(bool isCurrentCellAlive, 
 // POSTCONDITIONS:
 //		The patch at row row and column col in nextCells is updated to hold the result of applying the rule for Conway's Game of Life
 //			
-void updateCell(int *currentCells, int *nextCells, int row, int col, bool (*pFnComputeLiveness)(bool isCurrentCellAlive, int countSurroundingAlive))
+void updateCell(int **currentCells, int **nextCells, int row, int col, bool (*pFnComputeLiveness)(bool isCurrentCellAlive, int countSurroundingAlive))
 {
 	int countSurroundingAlive = countSurroundingLiveCells(currentCells, row, col);
-	int iCurrentCell = indexForRowCol(row, col);
-	bool isCurrentCellAlive = currentCells[iCurrentCell];
+	//int iCurrentCell = indexForRowCol(row, col);
+	bool isCurrentCellAlive = currentCells[row][col];
 	
-	nextCells[iCurrentCell] = (*pFnComputeLiveness)(isCurrentCellAlive, countSurroundingAlive);
+	nextCells[row][col] = (*pFnComputeLiveness)(isCurrentCellAlive, countSurroundingAlive);
 }
 
 // Encodes the classic rule for Conway's Game of Life.
@@ -202,7 +209,7 @@ bool computeLivenessRemainAlive1Thru3(bool isCurrentCellAlive, int countSurround
 //		0 <= col < the number of cols in currentCells  (COL_COUNT)
 // POSTCONDITIONS:
 //		returns the total count of the cells that are occupied in the surrounding Moore Neighbourhood (i.e., in the 8 surrounding cells in the North, NorthEast, East, South East, South, South West, West, and North West directions) 
-int countSurroundingLiveCells(int *currentCells, int row, int col)
+int countSurroundingLiveCells(int **currentCells, int row, int col)
 {
 	int countSurroundingAlive = 0;
 	
@@ -216,8 +223,22 @@ int countSurroundingLiveCells(int *currentCells, int row, int col)
 			  int checkingCol = col + deltaCol;
   			  if (isLegalCoord(checkingRow, checkingCol))
 				{
-				if (currentCells[indexForRowCol(checkingRow, checkingCol)] == 1)
+				if (currentCells[checkingRow][checkingCol] == 1)
 					countSurroundingAlive++;
+				}
+				else{
+					if (checkingRow < 0){
+						checkingRow = ROW_COUNT - 1;
+					}
+					else if (checkingRow == ROW_COUNT){
+						checkingRow = 0;
+					}
+					if (checkingCol < 0){
+						checkingCol = COL_COUNT - 1;
+					}
+					else if (checkingCol == COL_COUNT){
+						checkingCol = 0;
+					}
 				}
 			}
 	
@@ -229,11 +250,13 @@ int countSurroundingLiveCells(int *currentCells, int row, int col)
 //		None
 // POSTCONDITIONS:
 //		returns 1 iff 0 <= row < ROW_COUNT and 0 <= col < COL_COUNT
+
 bool isLegalCoord(int row, int col)
 {
 	return ((row >= 0 && row < ROW_COUNT) &&
 			(col >= 0 && col < COL_COUNT));
 }
+
 
 // Computes the index of the patch at row row and column col in the encoding array for row row row and column col in row major order
 // PRECONDITIONS:
@@ -269,7 +292,7 @@ void determineCurrentAndNextCells(int iTime, int **pArrayCurrentCells, int **pAr
 //		arrayCurrentCells points to an array of dimension ROW_COUNT x COL_COUNT 
 // POSTCONDITIONS:
 //		The contents of file strFileName are placed in arrayCurrentCells in row-major form 
-void readState(char *strFileName, int *arrayCurrentCells)
+void readState(char *strFileName, int arrayCurrentCells[100][100])
 {
   FILE *file = fopen(strFileName, "r");
 
@@ -296,7 +319,7 @@ void readState(char *strFileName, int *arrayCurrentCells)
 			  exit(1);
 			}
 			
-		arrayCurrentCells[indexForRowCol(row, col)] = cellValueForTextualEncoding(cEncoded);	
+		arrayCurrentCells[row][col] = cellValueForTextualEncoding(cEncoded);	
       }
       char newLine = fgetc(file);
 	  if (newLine != '\n')
@@ -316,7 +339,7 @@ void readState(char *strFileName, int *arrayCurrentCells)
 // POSTCONDITIONS:
 //		if the file whose filename/path is given by strFileName cannot be open for writing, the program terminates with an error message
 //		if the file whose filename/path is given by strFileName can be written, the program writes to that file an encoding of the state of the model given by arrayCurrentCells
-void  writeState(char *strFileName, int *arrayCurrentCells)
+void  writeState(char *strFileName, int **arrayCurrentCells)
 {
   FILE *file = fopen(strFileName, "w");
 
@@ -330,7 +353,7 @@ void  writeState(char *strFileName, int *arrayCurrentCells)
     {
     for (int col = 0; col < COL_COUNT; col++)
       {
-	fputc(textualEncodingForCellValue(arrayCurrentCells[indexForRowCol(row, col)]), file);
+	fputc(textualEncodingForCellValue(arrayCurrentCells[row][col]), file);
       }
 
     fputc('\n', file);    // row separator
