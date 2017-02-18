@@ -1,0 +1,8 @@
+// This assignment is done by pair programming
+// Xingneg Wang		|	Jared Manderscheid
+// 11144515			|	11159557
+// xiw031			|	jam943
+
+
+It take more time for me to change in the Exercise2ExampleSolutionWithCellRuleAbstractionAndDynamicallySelectedRuleV2, 
+and less time on ugly code.
